@@ -1,0 +1,102 @@
+{
+    "module": {
+        "identity": {
+            "uuid": "3362f4d5-0213-4c1e-80fc-be48d252af1f",
+            "id_local": "1",
+            "name": "ModbusTCP_Slave"
+        },
+        "communication": {
+            "hostname": "redis",
+            "type": "redis",
+            "interval_ms": 1000
+        }
+    },
+    "devices": [
+        {
+            "identity": {
+                "uuid": "e795fadb-00b4-4f42-a9a6-a3272933361b",
+                "type": "device",
+                "vendor": "Unitronics",
+                "model": "PLC",
+                "serial": "00000",
+                "id_local": "1",
+                "name": "UnilogicPlc"
+            },
+            "communication": {
+                "type": "modbusTCPslave",
+                "port": 20256,
+                "id": 2
+            },
+            "inputs": [
+                {
+                    "uuid": "cddf1167-9ec2-4c16-81e0-dcf9dd9a04fb",
+                    "label": "Pressure_P1",
+                    "name": "Pressure_P1",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "int",
+                    "communication_type": "modbus_holding_register",
+                    "register": 14,
+                    "bit_offset": 0,
+                    "bit_length": 16
+                }
+            ]
+        },
+        {
+            "identity": {
+                "uuid": "2edaaf20-bf78-49ad-ad41-c281025fefe5",
+                "type": "device",
+                "vendor": "Unitronics",
+                "model": "PLC",
+                "serial": "00000",
+                "id_local": "1",
+                "name": "PLC 2"
+            },
+            "communication": {
+                "hostname": "10.250.250.120",
+                "type": "modbusTCP",
+                "read_interval_ms": 1000,
+                "port": 20256,
+                "id": 2
+            },
+            "inputs": [
+                {
+                    "uuid": "57d2d822-17cc-42a0-a0ca-ed472eb2dd79",
+                    "label": "Pressure_P1",
+                    "name": "Pressure_P1",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "int",
+                    "communication_type": "modbus_holding_register",
+                    "register": 14,
+                    "bit_offset": 0,
+                    "bit_length": 16
+                },
+                {
+                    "uuid": "5a52453a-012c-493d-8af7-b3eadeed5dfe",
+                    "label": "Pressure_P2",
+                    "name": "Pressure_P2",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "int",
+                    "communication_type": "modbus_holding_register",
+                    "register": 15,
+                    "bit_offset": 0,
+                    "bit_length": 16
+                },
+                {
+                    "uuid": "d5f6990b-e45d-4525-9a36-e112ee911d79",
+                    "label": "Pressure_P3",
+                    "name": "Pressure_P3",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "int",
+                    "communication_type": "modbus_holding_register",
+                    "register": 16,
+                    "bit_offset": 0,
+                    "bit_length": 16
+                }
+            ]
+        }
+    ]
+}

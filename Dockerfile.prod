@@ -1,0 +1,16 @@
+FROM node:12
+
+# Create app directory
+RUN mkdir -p /usr/src/modbus_tcp_client
+WORKDIR /usr/src/modbus_tcp_client
+
+# Install app dependencies
+COPY package*.json ./
+
+RUN npm ci --only=production
+
+# Bundle app source
+COPY . .
+
+EXPOSE 11053
+CMD [ "node", "index.js" ]

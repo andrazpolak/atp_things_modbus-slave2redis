@@ -1,0 +1,18 @@
+{
+    "module": {
+        "identity": {
+            "uuid-model": "5879789f-cbed-4fd5-bdf7-35476c94e0bf",
+            "type": "module",
+            "vendor": "ATP",
+            "model": "ModbusTCP_Slave",
+            "id_local": "1",
+            "name": "default name"
+        },
+        "communication": {
+            "hostname": "redis",
+            "port": 11251,
+            "type": "redis",
+            "interval_ms": 1000
+        }
+    }
+}

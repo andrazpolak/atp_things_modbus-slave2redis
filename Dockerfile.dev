@@ -1,0 +1,14 @@
+FROM node:12
+
+RUN npm install -g nodemon
+# Create app directory
+RUN mkdir -p /usr/src/modbus_tcp_client
+WORKDIR /usr/src/modbus_tcp_client
+
+# Install app dependencies
+COPY package*.json ./
+
+RUN npm install
+
+EXPOSE 11053
+CMD [ "npm", "run" , "dev"]
