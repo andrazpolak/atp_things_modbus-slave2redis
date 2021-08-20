@@ -1,0 +1,124 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Module:
+                {{ pageTitle }}</h1>
+            <div class="container bg-primary">
+                <h3 class="card-title">{{ module.identity.name }}</h3>
+                <div class="container m-1 bg-light border">
+                    <h4>Identity</h4>
+                    <p>
+                        <b>UUID:</b>
+                        {{ module.identity.uuid }}<br>
+                        <b>Vendor:</b>
+                        {{ module.identity.vendor }}<br>
+                        <b>Model:</b>
+                        {{ module.identity.model }}<br>
+                        <b>Serial:</b>
+                        {{ module.identity.serial }}<br>
+                        <b>Local ID:</b>
+                        {{ module.identity.id_local }}</p>
+                </div>
+                <div class="container m-1 bg-light border">
+                    <h4>Communication</h4>
+                    <p>
+                        <b>Hostname:</b>
+                        <a href="http://{{ communication.hostname }}">{{ module.communication.hostname }}</a><br>
+                        <b>Type:</b>
+                        {{ module.communication.type }}<br>
+                        <b>Port:</b>
+                        {{ module.communication.port }}<br>
+                </div>
+            </div>
+            {{#devices}}
+                <div class="container bg-primary">
+                    <h3 class="card-title">{{ identity.name }}</h3>
+                    <div class="container m-1 bg-light border">
+                        <h4>Identity</h4>
+                        <p>
+                            <b>UUID:</b>
+                            {{ identity.uuid }}<br>
+                            <b>Vendor:</b>
+                            {{ identity.vendor }}<br>
+                            <b>Model:</b>
+                            {{ identity.model }}<br>
+                            <b>Serial:</b>
+                            {{ identity.serial }}<br>
+                            <b>Local ID:</b>
+                            {{ identity.id_local }}</p>
+                    </div>
+                    <div class="container m-1 bg-light border">
+                        <h4>Communication</h4>
+                        <p>
+                            <b>Hostname:</b>
+                            <a href="http://{{ communication.hostname }}">{{ communication.hostname }}</a><br>
+                            <b>Type:</b>
+                            {{ communication.type }}<br>
+                            <b>Port:</b>
+                            {{ communication.port }}<br>
+                            <b>Id:</b>
+                            {{ communication.id }}<br>
+                            <b>Read interval:</b>
+                            {{ communication.read_interval_ms }}
+                            ms</p>
+                    </div>
+                    <div class="container m-1 bg-light border">
+                        <h4>Status</h4>
+                        <p>
+                            <b>Connected:</b>
+                            {{ data.status.connected }}</p>
+                    </div>
+                    <div class="container m-1 bg-light border">
+                        <h4>Inputs</h4>
+                        <table>
+                            <tr>
+                                <th>Name</th>
+                                <th>Label</th>
+                                <th>Type</th>
+                                <th>Timestamp [ms]</th>
+                                <th>Value type</th>
+                                <th>Value</th>
+                                <th>Unit</th>
+                            </tr>
+                            {{#data.inputs}}
+                                <tr>
+                                    <td>{{ name }}</td>
+                                    <td>{{ label }}</td>
+                                    <td>{{ type }}</td>
+                                    <td>{{ ts }}</td>
+                                    <td>{{ value_type }}</td>
+                                    <td>{{ value }}</td>
+                                    <td>{{ unit }}</td>
+                                </tr>
+                            {{/data.inputs}}
+                        </table>
+                    </div>
+                    <div class="container m-1 bg-light border">
+                        <h4>Outputs</h4>
+                        <table>
+                            <tr>
+                                <th>Name</th>
+                                <th>Label</th>
+                                <th>Value</th>
+                                <th>Write</th>
+                            </tr>
+                            {{#data.outputs}}
+                                <tr>
+                                    <td>{{ name }}</td>
+                                    <td>{{ label }}</td>
+                                    <td id="{{ identity.uuid }}{{ name }}">{{ value }}</td>
+                                    <td>
+                                        <input type="number" id="{{ name }}" name="{{ name }}" value="{{ value }}">
+                                    </td>
+                                </tr>
+                            {{/data.outputs}}
+                        </table>
+                    </div>
+                </div>
+            {{/devices}}
+        </div>
+    </body>
+</html>

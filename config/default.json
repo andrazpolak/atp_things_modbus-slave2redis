@@ -11,8 +11,7 @@
         "communication": {
             "hostname": "redis",
             "port": 11251,
-            "type": "redis",
-            "interval_ms": 1000
+            "type": "redis"
         }
     }
 }
