@@ -34,26 +34,23 @@ let newDevice = new DeviceModbus(devices_cfg[0]);
 
 var vector = {
     getInputRegister: async function (addr, unitID) {
-        return await newDevice.getInputRegister(addr, unitID);
+        return await newDevice.modbusGetInputRegister(addr, unitID);
     },
     getHoldingRegister: async function (addr, unitID) {
-        return await newDevice.getHoldingRegister(addr, unitID);
+        return await newDevice.modbusGetHoldingRegister(addr, unitID);
     },
     getCoil: async function (addr, unitID) {
-        return await newDevice.getCoil(addr, unitID);
+        return await newDevice.modbusGetCoil(addr, unitID);
         // return true;
 
     },
     setRegister: async function (addr, value, unitID) {
-        return await newDevice.setRegister(addr, value, unitID);
+        return await newDevice.modbusSetRegister(addr, value, unitID);
     },
     setCoil: async function (addr, value, unitID) {
-        return await newDevice.setCoil(addr, value, unitID);
+        return await newDevice.modbusSetCoil(addr, value, unitID);
     }
 };
-
-
-
 
 // HTTP 
 app.get('/', (req, res) => {
@@ -63,6 +60,8 @@ app.get('/', (req, res) => {
             communication: device.communication,
             data: {
                 inputs: newDevice.inputs(),
+                coils: newDevice.getCoils(),
+                registers: newDevice.getRegisters()
                 //  outputs: device.outputs(),
                 // status: device.status(),
             }
@@ -97,18 +96,17 @@ app.get('/devices', (req, res) => {
 app.get('/coils', (req, res) => {
     const response = {};
     response.data = {
-        devices: devices_cfg
+        coils: newDevice.getCoils()
     };
     res.json(response)
 })
 app.get('/registers', (req, res) => {
     const response = {};
     response.data = {
-        devices: devices_cfg
+        registers: newDevice.getRegisters()
     };
     res.json(response)
 })
-
 
 
 // Set Modbus TCP server

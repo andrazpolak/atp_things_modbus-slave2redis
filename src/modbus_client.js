@@ -117,43 +117,48 @@ class DeviceModbus extends EventEmitter {
             return ret;
         });
     }
-    async setRegister(addr, value, unitID) {
-        console.log('set register', addr, value, unitID);
+    async modbusSetRegister(addr, value, unitID) {
+        // console.log('set register', addr, value, unitID);
         this._localRegisters[addr] = {
             ts: Date.now(),
             value: value
         }
-        console.log('registers:', this._localRegisters);
     }
 
-    async setCoil(addr, value, unitID) {
-        console.log('set coil', addr, value, unitID);
+    async modbusSetCoil(addr, value, unitID) {
+        // console.log('set coil', addr, value, unitID);
         this._localCoils[addr] = {
             ts: Date.now(),
             value: value
         }
-        console.log('Coils:', this._localCoils);
     }
 
-    async getInputRegister(addr, unitID) {
+    async modbusGetInputRegister(addr, unitID) {
         if (this._localRegisters[addr] === undefined)
             return 0;
         // console.log('getRegisters1', addr, this._localRegisters[addr].value);
         return this._localRegisters[addr].value;
     };
-    async getHoldingRegister(addr, unitID) {
+    async modbusGetHoldingRegister(addr, unitID) {
         if (this._localRegisters[addr] === undefined)
             return 0;
         // console.log('getRegisters2', addr, this._localRegisters[addr].value);
         return this._localRegisters[addr].value;
     };
-    async getCoil(addr, unitID) {
+    async modbusGetCoil(addr, unitID) {
 
         if (this._localCoils[addr] === undefined)
             return false;
 
         // console.log('getCoil', addr, this._localCoils[addr].value);
         return this._localCoils[addr].value;
+    };
+
+    getCoils() {
+        return this._localCoils;
+    };
+    getRegisters() {
+        return this._localRegisters;
     };
 
     info() {

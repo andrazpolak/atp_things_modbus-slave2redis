@@ -96,6 +96,26 @@
                             {{/data.inputs}}
                         </table>
                     </div>
+                     <div class="container m-1 bg-light border">
+                        <h4>Coils</h4>
+                        <table>
+                            <tr>
+                                <th>Address</th>
+                                <th>Timestamp [ms]</th>
+                                <th>Value</th>
+                            </tr>
+                            {{! https://handlebarsjs.com/guide/#partials }}
+                            {{#data.coils}}
+                                <tr>
+                                <th>Coil</th>
+                                    <td>{{ key}}</td>
+                                    <td>{{ value.ts }}</td>
+                                    <td>{{ value.value }}</td>
+                          
+                                </tr>
+                            {{/data.coils}}
+                        </table>
+                    </div>
                     <div class="container m-1 bg-light border">
                         <h4>Outputs</h4>
                         <table>
