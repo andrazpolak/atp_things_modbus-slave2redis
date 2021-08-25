@@ -1,9 +1,11 @@
 'use strict'
 // imports
+require('dotenv').config();
 const express = require('express');
 let mustacheExpress = require('mustache-express');
 let ModbusRTU = require("modbus-serial");
 const DeviceModbus = require('./src/modbus_client');
+const atp_things = require('atp_things_client_redis')
 
 const config = require('config');// define process.env.NODE_CONFIG_DIR
 const module_cfg = JSON.parse(JSON.stringify(config.get("module")));
@@ -28,29 +30,22 @@ let appRenderData = {
     module: module_cfg
 }
 
+
 let devices = devices_cfg;
 console.log("Devices:", devices_cfg);
 let newDevice = new DeviceModbus(devices_cfg[0]);
 
-var vector = {
-    getInputRegister: async function (addr, unitID) {
-        return await newDevice.modbusGetInputRegister(addr, unitID);
-    },
-    getHoldingRegister: async function (addr, unitID) {
-        return await newDevice.modbusGetHoldingRegister(addr, unitID);
-    },
-    getCoil: async function (addr, unitID) {
-        return await newDevice.modbusGetCoil(addr, unitID);
-        // return true;
 
-    },
-    setRegister: async function (addr, value, unitID) {
-        return await newDevice.modbusSetRegister(addr, value, unitID);
-    },
-    setCoil: async function (addr, value, unitID) {
-        return await newDevice.modbusSetCoil(addr, value, unitID);
+
+newDevice.on("datapointchanged", async function (data) {
+    try {
+        //console.log("Datapoint:", data);
+         await atp_things.set(data.uuid, "inputs", data);
+         await atp_things.publishInputs(data.uuid, data);
+    } catch (err) {
+        console.log("Redis send data", err);
     }
-};
+})
 
 // HTTP 
 app.get('/', (req, res) => {
@@ -62,8 +57,6 @@ app.get('/', (req, res) => {
                 inputs: newDevice.inputs(),
                 coils: newDevice.getCoils(),
                 registers: newDevice.getRegisters()
-                //  outputs: device.outputs(),
-                // status: device.status(),
             }
         };
     });
@@ -108,8 +101,35 @@ app.get('/registers', (req, res) => {
     res.json(response)
 })
 
+app.get('/variables', (req, res) => {
+    const response = {};
+    response.data = {
+        variables: newDevice.getDataPoints()
+    };
+    res.json(response)
+})
+// TODO: web socket
+
+
 
 // Set Modbus TCP server
+var vector = {
+    getInputRegister: async function (addr, unitID) {
+        return await newDevice.modbusGetInputRegister(addr, unitID);
+    },
+    getHoldingRegister: async function (addr, unitID) {
+        return await newDevice.modbusGetHoldingRegister(addr, unitID);
+    },
+    getCoil: async function (addr, unitID) {
+        return await newDevice.modbusGetCoil(addr, unitID);
+    },
+    setRegister: async function (addr, value, unitID) {
+        return await newDevice.modbusSetRegister(addr, value, unitID);
+    },
+    setCoil: async function (addr, value, unitID) {
+        return await newDevice.modbusSetCoil(addr, value, unitID);
+    }
+};
 const PORT_TCPIP = process.env.PORT_TCPIP || 502;
 console.log('ModbusTCP listening on modbus://0.0.0.0:' + PORT_TCPIP);
 var serverTCP = new ModbusRTU.ServerTCP(vector, { host: '0.0.0.0', port: PORT_TCPIP });

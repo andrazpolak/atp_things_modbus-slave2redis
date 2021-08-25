@@ -24,33 +24,111 @@
             },
             "communication": {
                 "type": "modbusTCPslave",
-                "port": 20256,
+                "port": 502,
                 "id": 2
             },
             "inputs": [
                 {
                     "uuid": "cddf1167-9ec2-4c16-81e0-dcf9dd9a04fb",
-                    "label": "Pressure_P1",
-                    "name": "Pressure_P1",
-                    "unit": "bar",
-                    "type": "pressure",
-                    "value_type": "int",
-                    "communication_type": "modbus_holding_register",
-                    "register": 14,
-                    "bit_offset": 0,
-                    "bit_length": 16
+                    "label": "Coil 1",
+                    "name": "Coil 1",
+                    "unit": "",
+                    "type": "On/Off",
+                    "value_type": "bool",
+                    "communication_type": "modbus_coil",
+                    "register": 0
                 },
                 {
-                    "uuid": "cddf1167-9ec2-4c16-81e0-dcf9dd9a04fb",
-                    "label": "Pressure_P1",
-                    "name": "Pressure_P1",
+                    "uuid": "5903677d-3c3c-41c1-aa3b-19c21b4103db",
+                    "label": "Coil 2",
+                    "name": "Coil 3",
+                    "unit": "",
+                    "type": "",
+                    "value_type": "bool",
+                    "communication_type": "modbus_coil",
+                    "register": 1
+                },
+                {
+                    "uuid": "b40f1269-d994-4198-bab9-1b6662b27b42",
+                    "label": "Coil 3",
+                    "name": "Coil 3",
+                    "unit": "",
+                    "type": "",
+                    "value_type": "bool",
+                    "communication_type": "modbus_coil",
+                    "register": 2
+                },
+                {
+                    "uuid": "831d3bd0-258c-4fac-9bd5-124d7504a67e",
+                    "label": "Register int16",
+                    "name": "Register int16",
                     "unit": "bar",
                     "type": "pressure",
-                    "value_type": "int",
-                    "communication_type": "modbus_holding_register",
-                    "register": 14,
-                    "bit_offset": 0,
-                    "bit_length": 16
+                    "value_type": "int16",
+                    "communication_type": "modbus_register",
+                    "register": 0
+                },
+                {
+                    "uuid": "46005bd9-d063-4e37-bb63-27c03e45326a",
+                    "label": "Register uint16",
+                    "name": "Register uint16",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "uint16",
+                    "communication_type": "modbus_register",
+                    "register": 1
+                },
+                {
+                    "uuid": "bc5a01cd-616b-4b6f-bb82-7d4f31fc9056",
+                    "label": "Register uint32",
+                    "name": "Register uint32",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "uint32",
+                    "communication_type": "modbus_register",
+                    "register": 2
+                },
+                {
+                    "uuid": "18b7ad8e-32b9-4255-ae21-31973d517a04",
+                    "label": "Register int32",
+                    "name": "Register int32",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "int32",
+                    "communication_type": "modbus_register",
+                    "register": 4
+                },
+                {
+                    "uuid": "9913fb0f-6e99-4528-ae74-22de10a9c2eb",
+                    "label": "Register float",
+                    "name": "Register float",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "float",
+                    "communication_type": "modbus_register",
+                    "register": 6
+                }
+                ,
+                {
+                    "uuid": "9913fb0f-6e99-4528-ae74-22de10a9c2eb",
+                    "label": "Register int8",
+                    "name": "Register int8",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "int8",
+                    "communication_type": "modbus_register",
+                    "register": 8
+                }
+                ,
+                {
+                    "uuid": "9913fb0f-6e99-4528-ae74-22de10a9c2eb",
+                    "label": "Register uint8",
+                    "name": "Register uint8",
+                    "unit": "bar",
+                    "type": "pressure",
+                    "value_type": "uint8",
+                    "communication_type": "modbus_register",
+                    "register": 9
                 }
             ]
         }

@@ -30,7 +30,7 @@
                         <b>Type:</b>
                         {{ module.communication.type }}<br>
                         <b>Port:</b>
-                        {{ module.communication.port }}<br>
+                        {{ module.communication.port }}<br></p>
                 </div>
             </div>
             {{#devices}}
@@ -53,28 +53,91 @@
                     <div class="container m-1 bg-light border">
                         <h4>Communication</h4>
                         <p>
-                            <b>Hostname:</b>
-                            <a href="http://{{ communication.hostname }}">{{ communication.hostname }}</a><br>
                             <b>Type:</b>
                             {{ communication.type }}<br>
                             <b>Port:</b>
                             {{ communication.port }}<br>
                             <b>Id:</b>
-                            {{ communication.id }}<br>
-                            <b>Read interval:</b>
-                            {{ communication.read_interval_ms }}
-                            ms</p>
+                            {{ communication.id }}<br></p>
                     </div>
                     <div class="container m-1 bg-light border">
-                        <h4>Status</h4>
-                        <p>
-                            <b>Connected:</b>
-                            {{ data.status.connected }}</p>
+                        <h4>Data points</h4>
+                        <table id="TableDataPoints"></table>
                     </div>
                     <div class="container m-1 bg-light border">
-                        <h4>Inputs</h4>
-                        <table>
-                            <tr>
+                        <h4>Coils</h4>
+                        <table id="TableCoils"></table>
+                    </div>
+                    <div class="container m-1 bg-light border">
+                        <h4>Registers</h4>
+                        <table id="TableRegisters"></table>
+                    </div>
+                </div>
+            {{/devices}}
+        </div>
+
+
+        <script>
+            async function getModbusCoils() {
+                let CoilsText = `<tr>
+                                <th>Address</th>
+                                <th>Timestamp [ms]</th>
+                                <th>Value</th>
+                            </tr>`
+                fetch('/coils').then(function (response) {
+                    return response.json();
+                }).then(data => {
+                    const coils = data.data.coils;
+
+                    for (let coil in coils) {
+                        CoilsText += `<tr>
+                                    <th>${coil}</th>
+                                    <td>${
+                            coils[coil].ts
+                        }</td>
+                                    <td>${
+                            coils[coil].value
+                        }</td>
+                                </tr>`
+                    }
+                    document.getElementById("TableCoils").innerHTML = CoilsText;
+                    {{ ! location.reload(); }}
+                }).catch(err => {
+                    console.log("Write output", "error:", err);
+                })
+            }
+            async function getModbusRegisters() {
+                let TableContent = `<tr>
+                                <th>Address</th>
+                                <th>Timestamp [ms]</th>
+                                <th>Value</th>
+                            </tr>`
+                fetch('/registers').then(function (response) {
+                    return response.json();
+                }).then(data => {
+                    const registers = data.data.registers;
+
+                    for (let register in registers) {
+                        TableContent += `<tr>
+                                    <th>${register}</th>
+                                    <td>${
+                            registers[register].ts
+                        }</td>
+                                    <td>${
+                            registers[register].value
+                        }</td>
+                                </tr>`
+                    }
+                    document.getElementById("TableRegisters").innerHTML = TableContent;
+                    {{ ! location.reload(); }}
+                }).catch(err => {
+                    console.log("Write output", "error:", err);
+                })
+            }
+
+            async function getModbusVariables() {
+                let TableContent = `<tr>
+                                <th>UUID</th>
                                 <th>Name</th>
                                 <th>Label</th>
                                 <th>Type</th>
@@ -82,63 +145,52 @@
                                 <th>Value type</th>
                                 <th>Value</th>
                                 <th>Unit</th>
-                            </tr>
-                            {{#data.inputs}}
-                                <tr>
-                                    <td>{{ name }}</td>
-                                    <td>{{ label }}</td>
-                                    <td>{{ type }}</td>
-                                    <td>{{ ts }}</td>
-                                    <td>{{ value_type }}</td>
-                                    <td>{{ value }}</td>
-                                    <td>{{ unit }}</td>
-                                </tr>
-                            {{/data.inputs}}
-                        </table>
-                    </div>
-                     <div class="container m-1 bg-light border">
-                        <h4>Coils</h4>
-                        <table>
-                            <tr>
-                                <th>Address</th>
-                                <th>Timestamp [ms]</th>
-                                <th>Value</th>
-                            </tr>
-                            {{! https://handlebarsjs.com/guide/#partials }}
-                            {{#data.coils}}
-                                <tr>
-                                <th>Coil</th>
-                                    <td>{{ key}}</td>
-                                    <td>{{ value.ts }}</td>
-                                    <td>{{ value.value }}</td>
-                          
-                                </tr>
-                            {{/data.coils}}
-                        </table>
-                    </div>
-                    <div class="container m-1 bg-light border">
-                        <h4>Outputs</h4>
-                        <table>
-                            <tr>
-                                <th>Name</th>
-                                <th>Label</th>
-                                <th>Value</th>
-                                <th>Write</th>
-                            </tr>
-                            {{#data.outputs}}
-                                <tr>
-                                    <td>{{ name }}</td>
-                                    <td>{{ label }}</td>
-                                    <td id="{{ identity.uuid }}{{ name }}">{{ value }}</td>
-                                    <td>
-                                        <input type="number" id="{{ name }}" name="{{ name }}" value="{{ value }}">
-                                    </td>
-                                </tr>
-                            {{/data.outputs}}
-                        </table>
-                    </div>
-                </div>
-            {{/devices}}
-        </div>
+                            </tr>`
+                fetch('/variables').then(function (response) {
+                    return response.json();
+                }).then(data => {
+                    const variables = data.data.variables;
+
+                    variables.forEach(datapoint => {
+                        TableContent += `<tr>
+                                    <th>${
+                            datapoint.uuid
+                        }</th>
+                                           <th>${
+                            datapoint.name
+                        }</th>
+                                           <th>${
+                            datapoint.label
+                        }</th>
+                                           <th>${
+                            datapoint.type
+                        }</th>
+                                           <th>${
+                            datapoint.ts
+                        }</th>
+                                           <th>${
+                            datapoint.value_type
+                        }</th>
+                                          <th>${
+                            datapoint.value
+                        }</th>
+                                                                  <th>${
+                            datapoint.unit
+                        }</th>
+     
+                                </tr>`
+
+                    })
+                    document.getElementById("TableDataPoints").innerHTML = TableContent;
+                    {{ ! location.reload(); }}
+                }).catch(err => {
+                    console.log("Write output", "error:", err);
+                })
+            }
+
+            setInterval(getModbusCoils, 1000);
+            setInterval(getModbusRegisters, 1000);
+            setInterval(getModbusVariables, 1000);
+        </script>
     </body>
 </html>

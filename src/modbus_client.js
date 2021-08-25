@@ -35,19 +35,6 @@ class DeviceModbus extends EventEmitter {
         this._localCoils = {};
         this._localRegisters = {};
         this._inputs = this.init_inputs(this._deviceModel.inputs);
-        // this._outputs = this.init_Outputs(this._deviceModel.outputs);
-
-        // //Get input registers
-        // this._inputs_registers = this.getInputRegisters(this._inputs);
-        // this._inputs_registers = this._inputs_registers.filter(uniqueElementsOfArray).sort(function (a, b) { return a - b });
-        // console.log("Input registers:", this._inputs_registers);
-        // this._inputs_registers_grouped_V2 = this.registersIntervals(this._inputs_registers);
-
-
-        // // Get input coils
-        // this._inputs_coils = this.getInputCoils(this._inputs);
-        // this._inputs_coils = this._inputs_coils.filter(uniqueElementsOfArray).sort(function (a, b) { return a - b });
-        // this._inputs_coils_grouped = this.registersIntervals(this._inputs_coils);
 
     }
 
@@ -123,6 +110,7 @@ class DeviceModbus extends EventEmitter {
             ts: Date.now(),
             value: value
         }
+        this.updateModbusRegister2DataPoint();
     }
 
     async modbusSetCoil(addr, value, unitID) {
@@ -131,6 +119,7 @@ class DeviceModbus extends EventEmitter {
             ts: Date.now(),
             value: value
         }
+        this.updateModbusCoil2DataPoint();
     }
 
     async modbusGetInputRegister(addr, unitID) {
@@ -154,11 +143,82 @@ class DeviceModbus extends EventEmitter {
         return this._localCoils[addr].value;
     };
 
+    updateModbusCoil2DataPoint() {
+        for (let dataPoint of this._inputs) {
+            if (dataPoint.communication_type === "modbus_coil")
+                dataPoint.value = this._localCoils[dataPoint.register].value;
+        }
+        return;
+    };
+
+    updateModbusRegister2DataPoint() {
+        for (let dataPoint of this._inputs) {
+            if (dataPoint.communication_type === "modbus_register") {
+                let buf = new ArrayBuffer(4);
+                let view = new DataView(buf);
+                if (dataPoint.ts === this._localRegisters[dataPoint.register].ts)
+                    continue;
+
+
+                if (dataPoint.value_type === "uint16" || dataPoint.value_type === "uint8") {
+                    dataPoint.value = this._localRegisters[dataPoint.register].value;
+                }
+
+                else if (dataPoint.value_type === "int16") {
+                    view.setUint16(0, this._localRegisters[dataPoint.register].value);
+                    dataPoint.value = view.getInt16(0);
+                }
+                else if (dataPoint.value_type === "int8") {
+                    view.setUint16(0, this._localRegisters[dataPoint.register].value);
+                    dataPoint.value = view.getInt8(0);//TODO: not tested
+                }
+
+                else if ("uint32" === dataPoint.value_type) {
+                    if (10 < Math.abs(this._localRegisters[dataPoint.register + 1].ts - this._localRegisters[dataPoint.register].ts))
+                        continue;
+                    view.setUint16(2, this._localRegisters[dataPoint.register].value);
+                    view.setUint16(0, this._localRegisters[dataPoint.register + 1].value);
+                    dataPoint.value = view.getUint32(0);
+                }
+                else if ("int32" === dataPoint.value_type) {
+                    if (10 < Math.abs(this._localRegisters[dataPoint.register + 1].ts - this._localRegisters[dataPoint.register].ts))
+                        continue;
+                    view.setUint16(2, this._localRegisters[dataPoint.register].value);
+                    view.setUint16(0, this._localRegisters[dataPoint.register + 1].value);
+                    dataPoint.value = view.getInt32(0);
+                }
+                else if ("float" === dataPoint.value_type) {
+                    if (10 < Math.abs(this._localRegisters[dataPoint.register + 1].ts - this._localRegisters[dataPoint.register].ts))
+                        continue;
+                    view.setUint16(2, this._localRegisters[dataPoint.register].value);
+                    view.setUint16(0, this._localRegisters[dataPoint.register + 1].value);
+                    dataPoint.value = view.getFloat32(0);
+                }
+                else {
+                    // If dataPoint.value_type is not specified or unknown
+                    dataPoint.value = this._localRegisters[dataPoint.register].value;
+                }
+                dataPoint.ts = this._localRegisters[dataPoint.register].ts;
+
+                this.updatedDataPoint(dataPoint);
+            }
+        }
+        return;
+    };
+
+    updatedDataPoint(dataPoint) {
+        this.emit('datapointchanged', dataPoint);
+    }
+
     getCoils() {
         return this._localCoils;
     };
     getRegisters() {
         return this._localRegisters;
+    };
+
+    getDataPoints() {
+        return this._inputs;
     };
 
     info() {
