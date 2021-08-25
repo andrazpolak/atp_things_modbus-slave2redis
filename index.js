@@ -30,12 +30,9 @@ let appRenderData = {
     module: module_cfg
 }
 
-
 let devices = devices_cfg;
 console.log("Devices:", devices_cfg);
 let newDevice = new DeviceModbus(devices_cfg[0]);
-
-
 
 newDevice.on("datapointchanged", async function (data) {
     try {
@@ -101,7 +98,8 @@ app.get('/registers', (req, res) => {
     res.json(response)
 })
 
-app.get('/variables', (req, res) => {
+
+app.get('/datapoints', (req, res) => {
     const response = {};
     response.data = {
         variables: newDevice.getDataPoints()
@@ -109,7 +107,6 @@ app.get('/variables', (req, res) => {
     res.json(response)
 })
 // TODO: web socket
-
 
 
 // Set Modbus TCP server

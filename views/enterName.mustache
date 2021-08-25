@@ -146,7 +146,7 @@
                                 <th>Value</th>
                                 <th>Unit</th>
                             </tr>`
-                fetch('/variables').then(function (response) {
+                fetch('/datapoints').then(function (response) {
                     return response.json();
                 }).then(data => {
                     const variables = data.data.variables;
