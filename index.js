@@ -37,11 +37,13 @@ let newDevice = new DeviceModbus(devices_cfg[0]);
 newDevice.on("datapointchanged", async function (data) {
     try {
         //console.log("Datapoint:", data);
-         await atp_things.set(data.uuid, "inputs", data);
+       // dataPoint.state = "synced";
+         await atp_things.set(data.uuid, "datapoint", data);
          await atp_things.publishInputs(data.uuid, data);
     } catch (err) {
         console.log("Redis send data", err);
     }
+   // console.log("Datapoints:",newDevice._inputs);
 })
 
 // HTTP 
@@ -61,11 +63,13 @@ app.get('/', (req, res) => {
 });
 
 // REST api
-app.get('/version', (req, res) => {
+app.get('/info', (req, res) => {
     const response = {};
     response.data = {
         name: appInfo.name,
-        versions: appInfo.version
+        versions: appInfo.version,
+        uuid: appInfo.atp_things.uuid,
+        env: process.env.NODE_ENV
     };
     res.json(response)
 })
@@ -112,18 +116,22 @@ app.get('/datapoints', (req, res) => {
 // Set Modbus TCP server
 var vector = {
     getInputRegister: async function (addr, unitID) {
+        console.log("modbus:");
         return await newDevice.modbusGetInputRegister(addr, unitID);
     },
     getHoldingRegister: async function (addr, unitID) {
         return await newDevice.modbusGetHoldingRegister(addr, unitID);
     },
     getCoil: async function (addr, unitID) {
+        console.log("modbus:");
         return await newDevice.modbusGetCoil(addr, unitID);
     },
     setRegister: async function (addr, value, unitID) {
+        console.log("modbus:");
         return await newDevice.modbusSetRegister(addr, value, unitID);
     },
     setCoil: async function (addr, value, unitID) {
+        console.log("modbus:");
         return await newDevice.modbusSetCoil(addr, value, unitID);
     }
 };

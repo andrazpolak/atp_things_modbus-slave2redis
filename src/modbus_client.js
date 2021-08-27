@@ -37,7 +37,10 @@ class DeviceModbus extends EventEmitter {
         this._inputs = this.init_inputs(this._deviceModel.inputs);
 
     }
+    setDatapointState(datapoint, value) {
+        datapoint.state = value;
 
+    }
     init_inputs(data) {
         const inputs = data.map((input) => {
             let measuringPoint = {
@@ -46,7 +49,8 @@ class DeviceModbus extends EventEmitter {
                 bit_offset: 0,
                 bit_length: 16,
                 ts: 0,
-                value: 0
+                value: 0,
+                state : "unknown"
             };
 
             if ('communication_type' in input)
@@ -148,6 +152,7 @@ class DeviceModbus extends EventEmitter {
             if (dataPoint.communication_type === "modbus_coil")
                 dataPoint.value = this._localCoils[dataPoint.register].value;
         }
+        this.updatedDataPoint(dataPoint);
         return;
     };
 
@@ -207,6 +212,7 @@ class DeviceModbus extends EventEmitter {
     };
 
     updatedDataPoint(dataPoint) {
+        // this.setDatapointState(dataPoint, "updated");
         this.emit('datapointchanged', dataPoint);
     }
 

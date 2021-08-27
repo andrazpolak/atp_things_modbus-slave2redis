@@ -36,5 +36,8 @@
     "express": "^4.17.1",
     "modbus-serial": "^8.0.3",
     "mustache-express": "^1.3.1"
+  },
+  "atp_things": {
+    "uuid": "9e9d8137-29d7-40db-8540-34f94125b026"
   }
 }
